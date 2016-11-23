@@ -1,0 +1,9 @@
+Building Kurrent
+
+See doc/readme-qt.rst for instructions on building Kurrent-qt,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of Kurrent.
+
+See doc/build-*.txt for instructions on building Kurrentd,
+the intended-for-services, no-graphical-interface, reference
+implementation of Kurrent.
