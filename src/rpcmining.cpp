@@ -504,7 +504,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
         uint256 txHash = tx.GetHash();
         setTxIndex[txHash] = i++;
 
-        if (tx.IsCoinBase())
+        if (i == 1 && tx.IsCoinBase())
             continue;
 
        if (tx.IsZerocoinSpend()) {
@@ -524,16 +524,19 @@ Value getblocktemplate(const Array& params, bool fHelp)
         entry.push_back(Pair("hash", txHash.GetHex()));
 
         Array deps;
-        BOOST_FOREACH (const CTxIn &in, tx.vin)
-        {
-            if (setTxIndex.count(in.prevout.hash))
-                deps.push_back(setTxIndex[in.prevout.hash]);
-        }
-        entry.push_back(Pair("depends", deps));
+		if (!tx.IsCoinBase())
+		{
+			BOOST_FOREACH(const CTxIn &in, tx.vin)
+			{
+				if (setTxIndex.count(in.prevout.hash))
+					deps.push_back(setTxIndex[in.prevout.hash]);
+			}
+			entry.push_back(Pair("depends", deps));
 
-        int index_in_template = i - 1;
-        entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
-        entry.push_back(Pair("sigops", pblocktemplate->vTxSigOps[index_in_template]));
+			int index_in_template = i - 1;
+			entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
+			entry.push_back(Pair("sigops", pblocktemplate->vTxSigOps[index_in_template]));
+		}
 
         transactions.push_back(entry);
     }
