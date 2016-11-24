@@ -2141,7 +2141,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     // Limit adjustment step
     int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetMedianTime();
-    // printf("  nActualTimespan = %ld before bounds\n", nActualTimespan);
+    printf("  nActualTimespan = %ld before bounds\n", nActualTimespan);
     if (nActualTimespan < LimUp)
         nActualTimespan = LimUp;
     if (nActualTimespan > LimDown)
@@ -2158,9 +2158,9 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
 
     /// debug print
     //printf("GetNextWorkRequired RETARGET\n");
-    // printf("nLookbackTimespan = %lld    nActualTimespan = %ld\n", nLookbackTimespan, nActualTimespan);
-    // printf("Before: %08x  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
-    // printf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
+    printf("nLookbackTimespan = %lld    nActualTimespan = %ld\n", nLookbackTimespan, nActualTimespan);
+    printf("Before: %08x  %s\n", pindexLast->nBits, CBigNum().SetCompact(pindexLast->nBits).getuint256().ToString().c_str());
+    printf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
 
     return bnNew.GetCompact();
 }
@@ -2196,10 +2196,11 @@ int64 GetProofOfWorkBonusRewardFactor(CBlockIndex* pindex)
 	long seed = hex2long(cseed);
 	int random = GenerateMTRandom(seed, 144000);
 
-	// printf(">> cseed = %s, random = %d\n", cseed, random);
+	printf(">> cseed = %s, random = %d\n", cseed, random);
 
 	if (random > 93382 && random < 93483)
 	{
+		printf(">> bonus block is hit\n");
 		return 99;
 	}
 
@@ -3163,9 +3164,9 @@ bool SetBestChain(CValidationState &state, CBlockIndex* pindexNew)
     nBestChainWork = pindexNew->nChainWork;
     nTimeBestReceived = GetTime();
     nTransactionsUpdated++;
-    printf("SetBestChain: new best=%s  height=%d  log2_work=%.8g  tx=%lu  date=%s progress=%f\n",
+    printf("SetBestChain: new best=%s  height=%d  log2_work=%.8g  tx=%lu  date=%s blocktime=%ld progress=%f\n",
       hashBestChain.ToString().c_str(), nBestHeight, log(nBestChainWork.getdouble())/log(2.0), (unsigned long)pindexNew->nChainTx,
-      DateTimeStrFormat("%Y-%m-%d %H:%M:%S", pindexBest->GetBlockTime()).c_str(),
+      DateTimeStrFormat("%Y-%m-%d %H:%M:%S", pindexBest->GetBlockTime()).c_str(), pindexBest->GetBlockTime(),
       Checkpoints::GuessVerificationProgress(pindexBest));
 
     // Check the version of the last 100 blocks to see if we need to upgrade:
@@ -3369,6 +3370,10 @@ bool CBlock::CheckBlock(CValidationState &state, int nHeight, bool fCheckPOW, bo
     // These are checks that are independent of context
     // that can be verified before saving an orphan block.
 
+	// blacklist block 472 of old chain
+	if (GetHash() == uint256("0x06b63a06dfeb952258df537df87b65bc4ea21ff362ae62eb32906a679f138191"))
+		return error("CheckBlock() 472: hash == 06b63a06dfeb952258df537df87b65bc4ea21ff362ae62eb32906a679f138191");
+
     // Size limits
     if (vtx.empty() || vtx.size() > MAX_BLOCK_SIZE || ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return state.DoS(100, error("CheckBlock() : size limits failed"));
@@ -3483,7 +3488,7 @@ bool CBlock::AcceptBlock(CValidationState &state, CDiskBlockPos *dbp)
 						return state.DoS(100, error("AcceptBlock() : incorrect vout in bonus block reward tx"));
 
 				nBonusReward = 0;
-				if (fDebug)
+				// if (fDebug)
 					printf("AcceptBlock() : good bonus block reward tx %s\n", vtx[i].GetHash().ToString().c_str());
 
 			}
