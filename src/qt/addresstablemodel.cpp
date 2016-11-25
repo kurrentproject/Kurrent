@@ -540,14 +540,13 @@ bool AddressTableModel::zerocoinMint(QWidget* parent, string &stringError)
 	if (amt <= 0)
 		return false;
 
-    WalletModel::UnlockContext ctx(walletModel->requestUnlock());
-    if(!ctx.isValid())
-    {
-        // Unlock wallet failed or was cancelled
-        return false;
-    }
-
-	return wallet->CreateZerocoinSpendModel(amt, stringError);
+	WalletModel::UnlockContext ctx(walletModel->requestUnlock());
+	if (!ctx.isValid())
+	{
+		// Unlock wallet failed or was cancelled
+		return false;
+	}
+	return wallet->CreateZerocoinMintModel(amt, stringError);
 }
 
 bool AddressTableModel::zerocoinSpend(QWidget* parent, string &stringError)
