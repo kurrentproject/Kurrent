@@ -50,7 +50,9 @@ public slots:
     void gotoReceiveCoinsPage();
     /** Switch to zerocoin page */
     void gotoZerocoinPage();
-    /** Switch to send coins page */
+	/** Switch to browser page */
+	void gotoBrowserPage();
+	/** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */

@@ -16,6 +16,7 @@ class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class RPCConsole;
+class BlockBrowser;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -36,7 +37,7 @@ public:
     explicit WalletView(QWidget *parent, BitcoinGUI *_gui);
     ~WalletView();
 
-    void setBitcoinGUI(BitcoinGUI *gui);
+    void setBitcoinGUI(BitcoinGUI *gui); 
     /** Set the client model.
         The client model represents the part of the core that communicates with the P2P network, and is wallet-agnostic.
     */
@@ -61,6 +62,7 @@ private:
     AddressBookPage *addressBookPage;
     AddressBookPage *receiveCoinsPage;
     AddressBookPage *zerocoinPage;
+	BlockBrowser *blockBrowser;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
 
@@ -77,7 +79,9 @@ public slots:
     void gotoReceiveCoinsPage();
     /** Switch to zerocoin page */
     void gotoZerocoinPage();
-    /** Switch to send coins page */
+	/** Switch to browser page */
+	void gotoBrowserPage();
+	/** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */

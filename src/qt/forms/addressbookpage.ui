@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="labelExplanation">
+     <property name="styleSheet">
+      <string notr="true">color: rgb(255, 255, 255);</string>
+     </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>
      </property>
@@ -31,6 +34,9 @@
      </property>
      <property name="toolTip">
       <string>Double-click to edit address or label</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: transparent;</string>
      </property>
      <property name="tabKeyNavigation">
       <bool>false</bool>
@@ -142,7 +148,7 @@
        </property>
        <property name="icon">
         <iconset resource="../bitcoin.qrc">
-         <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
+         <normaloff>:/icons/mint</normaloff>:/icons/mint</iconset>
        </property>
       </widget>
      </item>
@@ -153,7 +159,7 @@
        </property>
        <property name="icon">
         <iconset resource="../bitcoin.qrc">
-         <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
+         <normaloff>:/icons/spend</normaloff>:/icons/spend</iconset>
        </property>
       </widget>
      </item>

@@ -91,7 +91,7 @@ void CWalletDB::ListPubCoin(std::list<CZerocoinEntry>& listPubCoin)
     if (!pcursor)
         throw runtime_error("CWalletDB::ListPubCoin() : cannot create DB cursor");
     unsigned int fFlags = DB_SET_RANGE;
-    loop
+    while (true)
     {
         // Read next record
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
@@ -134,7 +134,7 @@ void CWalletDB::ListCoinSpendSerial(std::list<CZerocoinSpendEntry>& listCoinSpen
     if (!pcursor)
         throw runtime_error("CWalletDB::ListCoinSpendSerial() : cannot create DB cursor");
     unsigned int fFlags = DB_SET_RANGE;
-    loop
+    while (true)
     {
         // Read next record
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
@@ -189,7 +189,7 @@ void CWalletDB::ListAccountCreditDebit(const string& strAccount, list<CAccountin
     if (!pcursor)
         throw runtime_error("CWalletDB::ListAccountCreditDebit() : cannot create DB cursor");
     unsigned int fFlags = DB_SET_RANGE;
-    loop
+    while (true)
     {
         // Read next record
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
@@ -511,7 +511,7 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
             return DB_CORRUPT;
         }
 
-        loop
+        while (true)
         {
             // Read next record
             CDataStream ssKey(SER_DISK, CLIENT_VERSION);

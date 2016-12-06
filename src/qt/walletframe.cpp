@@ -103,6 +103,11 @@ void WalletFrame::gotoZerocoinPage()
     walletStack->gotoZerocoinPage();
 }
 
+void WalletFrame::gotoBrowserPage()
+{
+	walletStack->gotoBrowserPage();
+}
+
 void WalletFrame::gotoSendCoinsPage(QString addr)
 {
     walletStack->gotoSendCoinsPage(addr);

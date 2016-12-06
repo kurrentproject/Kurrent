@@ -60,6 +60,7 @@ TransactionView::TransactionView(QWidget *parent) :
     dateWidget->addItem(tr("Last month"), LastMonth);
     dateWidget->addItem(tr("This year"), ThisYear);
     dateWidget->addItem(tr("Range..."), Range);
+	// dateWidget->setStyleSheet("{color black;}");
     hlayout->addWidget(dateWidget);
 
     typeWidget = new QComboBox(this);
@@ -77,7 +78,7 @@ TransactionView::TransactionView(QWidget *parent) :
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
-
+	// typeWidget->setStyleSheet("{color black;}");
     hlayout->addWidget(typeWidget);
 
     addressWidget = new QLineEdit(this);
@@ -120,7 +121,7 @@ TransactionView::TransactionView(QWidget *parent) :
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     view->setTabKeyNavigation(false);
     view->setContextMenuPolicy(Qt::CustomContextMenu);
-
+	// view->setStyleSheet("{background-color transparent;}");
     transactionView = view;
 
     // Actions

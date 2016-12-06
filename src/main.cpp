@@ -2083,6 +2083,8 @@ int64 GetBlockValue(int nHeight, int64 nFees, uint256 prevHash)
 	if (nSubsidy < MinimumCoin)
 		nSubsidy = MinimumCoin;
 
+	printf(">> Height = %d, Coins = %d\n", nHeight, (64 + rand));
+
 	return nSubsidy + nFees;
 }
 
@@ -6045,7 +6047,7 @@ void static KurrentMiner(CWallet *pwallet)
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
 
-    try { loop {
+    try { while(true) {
         while (vNodes.empty())
             MilliSleep(1000);
 
@@ -6085,12 +6087,12 @@ void static KurrentMiner(CWallet *pwallet)
         //
         int64 nStart = GetTime();
         uint256 hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-        loop
+        while (true)
         {
             unsigned int nHashesDone = 0;
 
             uint256 thash;
-            loop
+			while (true)
             {
 				thash = pblock->GetPoWHash();
 				if (thash == 0)

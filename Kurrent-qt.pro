@@ -22,6 +22,19 @@ win32 {
     windows:LIBS += -lws2_32 -lole32 -loleaut32 -luuid -lgdi32
     LIBS += -lboost_system-mgw49-mt-s-1_57 -lboost_filesystem-mgw49-mt-s-1_57 -lboost_program_options-mgw49-mt-s-1_57 -lboost_thread-mgw49-mt-s-1_57
 
+BOOST_LIB_SUFFIX=-mgw49-mt-s-1_57
+BOOST_INCLUDE_PATH=E:/boost_1_57_0
+BOOST_LIB_PATH=E:/boost_1_57_0/stage/lib
+BDB_INCLUDE_PATH=E:/db-4.8.30.NC/build_unix
+BDB_LIB_PATH=E:/db-4.8.30.NC/build_unix
+OPENSSL_INCLUDE_PATH=E:/openssl-1.0.1l/include
+OPENSSL_LIB_PATH=E:/openssl-1.0.1l
+MINIUPNPC_INCLUDE_PATH=E:/
+MINIUPNPC_LIB_PATH=E:/miniupnpc
+LIBPNG_INCLUDE_PATH=E:/libpng-1.6.16
+LIBPNG_LIB_PATH=CE:/libpng-1.6.16/.libs
+QRENCODE_INCLUDE_PATH=E:/qrencode-3.4.4
+QRENCODE_LIB_PATH=E:/qrencode-3.4.4/.libs
 }
 
 BDB_LIB_SUFFIX=-4.8
@@ -215,6 +228,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/bitcoinunits.h \
     src/qt/qvaluecombobox.h \
     src/qt/askpassphrasedialog.h \
+    src/qt/blockbrowser.h \
     src/protocol.h \
     src/qt/notificator.h \
     src/qt/paymentserver.h \
@@ -318,6 +332,7 @@ SOURCES += src/qt/bitcoin.cpp \
     src/qt/bitcoinunits.cpp \
     src/qt/qvaluecombobox.cpp \
     src/qt/askpassphrasedialog.cpp \
+    src/qt/blockbrowser.cpp \
     src/protocol.cpp \
     src/qt/notificator.cpp \
     src/qt/paymentserver.cpp \
@@ -354,6 +369,7 @@ RESOURCES += src/qt/bitcoin.qrc
 FORMS += src/qt/forms/sendcoinsdialog.ui \
     src/qt/forms/coincontroldialog.ui \
     src/qt/forms/addressbookpage.ui \
+    src/qt/forms/blockbrowser.ui \
     src/qt/forms/signverifymessagedialog.ui \
     src/qt/forms/aboutdialog.ui \
     src/qt/forms/editaddressdialog.ui \

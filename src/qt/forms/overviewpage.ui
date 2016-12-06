@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">color: rgb(255, 255, 255);</string>
+  </property>
   <layout class="QVBoxLayout" name="topLayout">
    <item>
     <widget class="QLabel" name="labelAlerts">
@@ -202,25 +205,25 @@
          </property>
         </spacer>
        </item>
-        <item>
-          <widget class="QLabel" name="label_6">
-            <property name="text">
-              <string/>
-            </property>
-            <property name="pixmap">
-              <pixmap resource="../bitcoin.qrc">:/images/backg</pixmap>
-            </property>
-            <property name="scaledContents">
-              <bool>false</bool>
-            </property>
-            <property name="alignment">
-              <set>Qt::AlignCenter</set>
-            </property>
-            <property name="margin">
-              <number>-2</number>
-            </property>
-          </widget>
-        </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../bitcoin.qrc">:/images/wallet</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="margin">
+          <number>-2</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -277,7 +280,9 @@
           <item>
            <widget class="QListView" name="listTransactions">
             <property name="styleSheet">
-             <string notr="true">QListView { background: transparent; }</string>
+             <string notr="true">QListView { background: transparent; }
+QToolTip {color: black;}
+</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -315,6 +320,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../bitcoin.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -25,6 +25,7 @@
 #include "ui_interface.h"
 #include "wallet.h"
 #include "init.h"
+#include "blockbrowser.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -77,6 +78,20 @@ BitcoinGUI::BitcoinGUI(QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
     QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
+
+	qApp->setStyleSheet("QComboBox {border: 1px solid black; color black;} \
+		QMenu {color: black; background-color: white; border-color: black;} \
+        QMainWindow {background-image:url(:images/background);border:none;font-family:'Open Sans,sans-serif';} \
+		QTableView {color:white; background-color: transparent; alternate-background-color: rgb(50, 50, 50);} \
+		QHeaderView::section {color: black; background-color:white; } \
+		QLineEdit {background-color: white;} \
+		QToolBar {background-color: white;} \
+		QToolButton {background-color: white; border-color: black;} \
+		QPushButton {background-color: white; border-color: black;} \
+		QMenuBar {background-color: black;} \
+		QMenuBar::item {color: white; background-color: black;} \
+		QMenuBar::item:selected {color: white; font-weight: bold; background-color: rgb(80, 80, 80);}");
+
     // Create wallet frame and make it the central widget
     walletFrame = new WalletFrame(this);
     setCentralWidget(walletFrame);
@@ -210,6 +225,13 @@ void BitcoinGUI::createActions()
     zerocoinAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(zerocoinAction);
 
+	browserAction = new QAction(QIcon(":/icons/blockexplorer"), tr("&BlockExplorer"), this);
+	browserAction->setStatusTip(tr("Kurrent embedded block explorer"));
+	browserAction->setToolTip(browserAction->statusTip());
+	browserAction->setCheckable(true);
+	browserAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+	tabGroup->addAction(browserAction);
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -222,6 +244,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));    
     connect(zerocoinAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(zerocoinAction, SIGNAL(triggered()), this, SLOT(gotoZerocoinPage()));
+	connect(browserAction, SIGNAL(triggered()), this, SLOT(gotoBrowserPage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setStatusTip(tr("Quit application"));
@@ -230,7 +253,7 @@ void BitcoinGUI::createActions()
     aboutAction = new QAction(QIcon(":/icons/bitcoin"), tr("&About Kurrent"), this);
     aboutAction->setStatusTip(tr("Show information about Kurrent"));
     aboutAction->setMenuRole(QAction::AboutRole);
-    aboutQtAction = new QAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), this);
+    aboutQtAction = new QAction(QIcon(":/icons/qtlogo64"), tr("About &Qt"), this);
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
@@ -239,7 +262,7 @@ void BitcoinGUI::createActions()
     toggleHideAction = new QAction(QIcon(":/icons/bitcoin"), tr("&Show / Hide"), this);
     toggleHideAction->setStatusTip(tr("Show or hide the main Window"));
 
-    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
+    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed-black"), tr("&Encrypt Wallet..."), this);
     encryptWalletAction->setStatusTip(tr("Encrypt the private keys that belong to your wallet"));
     encryptWalletAction->setCheckable(true);
     backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
@@ -308,6 +331,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(zerocoinAction);
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
+	toolbar->addAction(browserAction);
 }
 
 void BitcoinGUI::setClientModel(ClientModel *clientModel)
@@ -385,7 +409,7 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
     verifyMessageAction->setEnabled(enabled);
     addressBookAction->setEnabled(enabled);
     zerocoinAction->setEnabled(enabled);
-
+	browserAction->setEnabled(enabled);
 }
 
 void BitcoinGUI::createTrayIcon()
@@ -510,6 +534,11 @@ void BitcoinGUI::gotoReceiveCoinsPage()
 void BitcoinGUI::gotoZerocoinPage()
 {
     if (walletFrame) walletFrame->gotoZerocoinPage();
+}
+
+void BitcoinGUI::gotoBrowserPage()
+{
+	if (walletFrame) walletFrame->gotoBrowserPage();
 }
 
 void BitcoinGUI::gotoSendCoinsPage(QString addr)
@@ -664,7 +693,7 @@ void BitcoinGUI::message(const QString &title, const QString &message, unsigned 
             break;
         }
     }
-    // Append title to "Bitcoin - "
+    // Append title to "Kurrent - "
     if (!msgType.isEmpty())
         strTitle += " - " + msgType;
 
