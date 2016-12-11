@@ -116,6 +116,17 @@ xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
     leveldb/libleveldb.a \
+    obj/groestl.o \
+    obj/blake.o \
+    obj/bmw.o \
+    obj/skein.o \
+    obj/keccak.o \
+    obj/shavite.o \
+    obj/jh.o \
+    obj/luffa.o \
+    obj/cubehash.o \
+    obj/echo.o \
+    obj/simd.o \
     obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
@@ -155,22 +166,7 @@ OBJS= \
     obj/libzerocoin/ParamGeneration.o \
     obj/libzerocoin/Params.o \
     obj/libzerocoin/SerialNumberSignatureOfKnowledge.o \
-    obj/libzerocoin/SpendMetaData.o \
-    obj/aes_helper.o \
-    obj/blake.o \
-    obj/bmw.o \
-    obj/cubehash.o \
-    obj/echo.o \
-    obj/groestl.o \
-    obj/jh.o \
-    obj/keccak.o \
-    obj/luffa.o \
-    obj/shavite.o \
-    obj/simd.o \
-    obj/skein.o 
-
-
-
+    obj/libzerocoin/SpendMetaData.o 
 
 
 ifdef USE_SSE2

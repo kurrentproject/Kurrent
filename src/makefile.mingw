@@ -17,19 +17,24 @@
 
 CXX ?= g++
 
-USE_UPNP:=1
+USE_UPNP:=-
 USE_IPV6:=1
 
-DEPSDIR?=/usr/local
-BOOST_SUFFIX?=-mgw46-mt-sd-1_52
+DEPSDIR?=E:/
+BOOST_SUFFIX?=-mgw49-mt-s-1_57
 
 INCLUDEPATHS= \
- -I"$(CURDIR)" \
- -I"$(DEPSDIR)/include"
+ -I"/E/boost_1_57_0" \
+ -I"/E/db-4.8.30.NC/build_unix" \
+ -I"/E/openssl-1.0.1l/include" \
+ -I"/E"
 
 LIBPATHS= \
- -L"$(CURDIR)/leveldb" \
- -L"$(DEPSDIR)/lib"
+ -L"/E/boost_1_57_0/stage/lib" \
+ -L"/E/db-4.8.30.NC/build_unix" \
+ -L"/E/openssl-1.0.1l" \
+ -L"/E/miniupnpc" \
+ -L"leveldb"
 
 LIBS= \
  -l leveldb \
@@ -51,6 +56,7 @@ LDFLAGS=-Wl,--dynamicbase -Wl,--nxcompat -Wl,--large-address-aware
 
 TESTDEFS = -DTEST_DATA_DIR=$(abspath test/data)
 
+
 ifndef USE_UPNP
 	override USE_UPNP = -
 endif
@@ -70,6 +76,17 @@ HEADERS = $(wildcard *.h)
 
 OBJS= \
     leveldb/libleveldb.a \
+    obj/groestl.o \
+    obj/blake.o \
+    obj/bmw.o \
+    obj/skein.o \
+    obj/keccak.o \
+    obj/shavite.o \
+    obj/jh.o \
+    obj/luffa.o \
+    obj/cubehash.o \
+    obj/echo.o \
+    obj/simd.o \
     obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
@@ -101,19 +118,15 @@ OBJS= \
     obj/noui.o \
     obj/leveldb.o \
     obj/txdb.o \
-	obj/aes_helper.o \
-    obj/blake.o \
-    obj/bmw.o \
-    obj/cubehash.o \
-    obj/echo.o \
-    obj/groestl.o \
-    obj/jh.o \
-    obj/keccak.o \
-    obj/luffa.o \
-    obj/shavite.o \
-    obj/simd.o \
-    obj/skein.o 
-
+    obj/libzerocoin/Accumulator.o \
+    obj/libzerocoin/AccumulatorProofOfKnowledge.o \
+    obj/libzerocoin/Coin.o \
+    obj/libzerocoin/CoinSpend.o \
+    obj/libzerocoin/Commitment.o \
+    obj/libzerocoin/ParamGeneration.o \
+    obj/libzerocoin/Params.o \
+    obj/libzerocoin/SerialNumberSignatureOfKnowledge.o \
+    obj/libzerocoin/SpendMetaData.o 
 
 ifdef USE_SSE2
 DEFS += -DUSE_SSE2
@@ -122,9 +135,6 @@ OBJS += $(OBJS_SSE2)
 endif
 
 all: Kurrentd.exe
-
-test check: test_Kurrent.exe FORCE
-	test_Kurrent.exe
 
 #
 # LevelDB support
@@ -135,27 +145,39 @@ DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 leveldb/libleveldb.a:
 	cd leveldb && $(MAKE) CC=$(CC) CXX=$(CXX) OPT="$(CFLAGS)" TARGET_OS=NATIVE_WINDOWS libleveldb.a libmemenv.a && cd ..
 
+obj/libzerocoin/%.o: libzerocoin/%.cpp
+	$(CXX) -c $(CFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	  rm -f $(@:%.o=%.d)
+
 obj/%-sse2.o: %-sse2.cpp
 	$(CXX) -c $(CFLAGS) -msse2 -mstackrealign -o $@ $<
 
 obj/%.o: %.cpp $(HEADERS)
-	$(CXX) -c $(CFLAGS) -o $@ $<
+	g++ -c $(CFLAGS) -o $@ $<
+	
+obj/%.o: %.c
+	$(CXX) -c $(xCXXFLAGS) -fpermissive -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+              -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	      
+	rm -f $(@:%.o=%.d)
+obj/%.o: %.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	  rm -f $(@:%.o=%.d)
 
 Kurrentd.exe: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
 
-TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
-
-obj-test/%.o: test/%.cpp $(HEADERS)
-	$(CXX) -c $(TESTDEFS) $(CFLAGS) -o $@ $<
-
-test_Kurrent.exe: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
-	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $(LIBPATHS) $^ -lboost_unit_test_framework$(BOOST_SUFFIX) $(LIBS)
-
 clean:
-	rm -f Kurrentd.exe test_Kurrent.exe
+	rm -f Kurrentd.exe 
 	rm -f obj/*
-	rm -f obj-test/*
 	cd leveldb && $(MAKE) TARGET_OS=NATIVE_WINDOWS clean && cd ..
 
 FORCE:
