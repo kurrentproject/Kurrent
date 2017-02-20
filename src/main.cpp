@@ -1440,23 +1440,44 @@ bool CTransaction::CheckTransaction(CValidationState &state, uint256 hashTx, boo
                                     int countPubcoin = 0;
                                     //printf("PROCESS REVERSE\n");
                                     BOOST_REVERSE_FOREACH(const CZerocoinEntry& pubCoinItem, listPubCoin) {
-                                        //printf("pubCoinItem.denomination = %d, pubCoinItem.id = %d, pubcoinId = %d \n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId);
-                                        if (pubCoinItem.denomination == libzerocoin::ZQ_PEDERSEN && pubCoinItem.id == pubcoinId_s && pubCoinItem.nHeight != -1) {
-                                            //printf("## denomination = %d, id = %d, pubcoinId = %d height = %d\n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId, pubCoinItem.nHeight);
-                                            libzerocoin::PublicCoin pubCoinTemp(ZCParams, pubCoinItem.value, libzerocoin::ZQ_PEDERSEN);
-                                            if (!pubCoinTemp.validate()) {
-                                                return state.DoS(100, error("CTransaction::CheckTransaction() : Error: Public Coin for Accumulator is not valid !!!"));
-                                            }
-                                            countPubcoin++;
-                                            accumulatorRev += pubCoinTemp;
-                                            if (countPubcoin >= 2) { // MINIMUM REQUIREMENT IS 2 PUBCOINS
-                                                if (newSpend.Verify(accumulatorRev, newMetadata)) {
-                                                    //printf("COIN SPEND TX DID VERIFY!\n");
-                                                    passVerify = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
+										if (nHeight < ZCOIN_BUG_FIX_SWITCH_BLOCK) {
+											//printf("pubCoinItem.denomination = %d, pubCoinItem.id = %d, pubcoinId = %d \n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId);
+											if (pubCoinItem.denomination == libzerocoin::ZQ_PEDERSEN && pubCoinItem.id == pubcoinId_s && pubCoinItem.nHeight != -1) {
+												//printf("## denomination = %d, id = %d, pubcoinId = %d height = %d\n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId, pubCoinItem.nHeight);
+												libzerocoin::PublicCoin pubCoinTemp(ZCParams, pubCoinItem.value, libzerocoin::ZQ_PEDERSEN);
+												if (!pubCoinTemp.validate()) {
+													return state.DoS(100, error("CTransaction::CheckTransaction() : Error: Public Coin for Accumulator is not valid !!!"));
+												}
+												countPubcoin++;
+												accumulatorRev += pubCoinTemp;
+												if (countPubcoin >= 2) { // MINIMUM REQUIREMENT IS 2 PUBCOINS
+													if (newSpend.Verify(accumulatorRev, newMetadata)) {
+														//printf("COIN SPEND TX DID VERIFY!\n");
+														passVerify = true;
+														break;
+													}
+												}
+											}
+										}
+										else {
+											//printf("pubCoinItem.denomination = %d, pubCoinItem.id = %d, pubcoinId = %d \n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId);
+											if (pubCoinItem.denomination == libzerocoin::ZQ_WILLIAMSON && pubCoinItem.id == pubcoinId_s && pubCoinItem.nHeight != -1) {
+												//printf("## denomination = %d, id = %d, pubcoinId = %d height = %d\n", pubCoinItem.denomination, pubCoinItem.id, pubcoinId, pubCoinItem.nHeight);
+												libzerocoin::PublicCoin pubCoinTemp(ZCParams, pubCoinItem.value, libzerocoin::ZQ_WILLIAMSON);
+												if (!pubCoinTemp.validate()) {
+													return state.DoS(100, error("CTransaction::CheckTransaction() : Error: Public Coin for Accumulator is not valid !!!"));
+												}
+												countPubcoin++;
+												accumulatorRev += pubCoinTemp;
+												if (countPubcoin >= 2) { // MINIMUM REQUIREMENT IS 2 PUBCOINS
+													if (newSpend.Verify(accumulatorRev, newMetadata)) {
+														//printf("COIN SPEND TX DID VERIFY!\n");
+														passVerify = true;
+														break;
+													}
+												}
+											}
+										}
                                     }
                                 }
 
